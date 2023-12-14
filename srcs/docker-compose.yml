@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: ./srcs/requirements/nginx
+    restart: always
+    ports:
+      - "443:443"
+    networks:
+      - my-network
+    volumes:
+      - nginx-certs:/etc/nginx/certs
+    env_file:
+      - ./srcs/.env
+
+  wordpress:
+    build:
+      context: ./srcs/requirements/wordpress
+    restart: always
+    networks:
+      - my-network
+    volumes:
+      - wordpress-db:/var/lib/mysql
+      - wordpress-files:/var/www/html
+    env_file:
+      - ./srcs/.env
+
+  mariadb:
+    build:
+      context: ./srcs/requirements/mariadb
+    restart: always
+    networks:
+      - my-network
+    volumes:
+      - wordpress-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - ./srcs/.env
+
+volumes:
+  nginx-certs:
+  wordpress-db:
+  wordpress-files:
+
+networks:
+  my-network:
+    driver: bridge
