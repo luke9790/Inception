@@ -1,12 +1,4 @@
-FROM alpine:3.17
-
-RUN apt-get update && \
-    apt-get install -y nginx && \
-    rm -rf /var/lib/apt/lists/*
-
-COPY conf/nginx.conf /etc/nginx/nginx.conf
-
+FROM alpine:3.18
+RUN	apk update && apk upgrade && apk add --no-cache nginx
 EXPOSE 443
-
 CMD ["nginx", "-g", "daemon off;"]
-
