@@ -125,12 +125,14 @@ volumes: #qua configuriamo i volumi.
   wp-volume:
     driver_opts:
       o: bind
+      type: none
       device: /home/${USER}/data/wordpress
   # o (sta per option) e' di tipo bind, cioe' lega il volume alla cartella locale (tiene le modifiche)
   # device indica dove salviamo i volumi sulla macchina locale
   db-volume:
     driver_opts:
       o: bind
+      type: none
       device: /home/${USER}/data/mariadb
   portainer_data:
 
