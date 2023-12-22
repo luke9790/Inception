@@ -34,7 +34,7 @@ services:
       # non importa configurare il nome utente root
     container_name: mariadb
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - inception
     restart: always
@@ -47,12 +47,15 @@ services:
         DB_NAME: ${DB_NAME}
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
+        DB_PORT: "3307"
     container_name: wordpress
     depends_on:
       - mariadb
     restart: always
     networks:
       - inception
+    ports:
+      - "8081:80" 
     volumes:
       - wp-volume:/var/www/
     # ancora una volta montiamo lo stesso volume, per garantirci che i container abbiano accesso agli stessi dati
@@ -126,14 +129,14 @@ volumes: #qua configuriamo i volumi.
     driver_opts:
       o: bind
       type: none
-      device: /home/${USER}/data/wordpress
+      device: /root/data/wordpress # /home/${USER}/data/wordpress  # /root/data/wordpress
   # o (sta per option) e' di tipo bind, cioe' lega il volume alla cartella locale (tiene le modifiche)
   # device indica dove salviamo i volumi sulla macchina locale
   db-volume:
     driver_opts:
       o: bind
       type: none
-      device: /home/${USER}/data/mariadb
+      device: /root/data/mariadb # /home/${USER}/data/mariadb    # /root/data/mariadb
   portainer_data:
 
 networks:

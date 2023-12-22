@@ -21,12 +21,10 @@ clean: down
 
 fclean:
 	@printf "Total clean of all configurations docker\n"
-	if [ -n "$$(docker ps -qa)" ]; then \
-		docker stop $$(docker ps -qa); \
-	fi
+	@docker stop $$(docker ps -qa) 2>/dev/null || true
 	@docker system prune --all --force --volumes
-	@docker volume rm srcs_wp-volume
-	@docker volume rm srcs_db-volume
+	@docker volume rm srcs_wp-volume 2>/dev/null || true
+	@docker volume rm srcs_db-volume 2>/dev/null || true
 	@docker network prune --force
 	@docker volume prune --force
 	@sudo rm -rf ../data/wordpress
