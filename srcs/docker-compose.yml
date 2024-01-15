@@ -3,35 +3,30 @@ version: '3'
 services:
   nginx:
     build:
-      context: . #indica la directory di partenza da cui cercare i vari file (in questo caso srcs)
+      context: .
       dockerfile: requirements/nginx/Dockerfile
     container_name: nginx
-    depends_on: #indica la dipendenza, esegue quindi wp prima di lanciare nginx
+    depends_on:
       - wordpress
-    ports: #apre la porta del network docker su quella relativa della macchina host
+    ports:
       - "443:443"
     networks:
       - inception
-    volumes: #monta i volumi virtuali dei container e copia i dati utili.
-    # nei primi due copia i dati sulla macchina locale dentro il container (sostuituendo i file presenti)
-    # il terzo prende il volume di wp (creato col container di wp) e lo inserisce per poter mantenere le modifiche fatte
+    volumes:
       - ./requirements/nginx/conf/:/etc/nginx/http.d/
       - ./requirements/nginx/tools:/etc/nginx/ssl/
-      - wp-volume:/var/www/ 
-    #var viene usato per le variabili(lib per database, www o html siti, log per registri ecc)
+      - wp-volume:/var/www/
     restart: always
 
   mariadb:
     build:
       context: .
       dockerfile: requirements/mariadb/Dockerfile
-      args: #argomenti per configurare con le nostre variabili il database
+      args:
         DB_NAME: ${DB_NAME}
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
         DB_ROOT: ${DB_ROOT}
-      # name = nome database, user = nome utente, pass = pass utente, root = pass root
-      # non importa configurare il nome utente root
     container_name: mariadb
     ports:
       - "3306:3306"
@@ -55,7 +50,6 @@ services:
       - inception
     volumes:
       - wp-volume:/var/www/
-    # ancora una volta montiamo lo stesso volume, per garantirci che i container abbiano accesso agli stessi dati
 
   redis:
     build:
@@ -121,14 +115,13 @@ services:
       - inception
     restart: always
     
-volumes: #qua configuriamo i volumi. 
+volumes:
   wp-volume:
     driver_opts:
       o: bind
       type: none
       device: /home/${USER}/data/wordpress
-  # o (sta per option) e' di tipo bind, cioe' lega il volume alla cartella locale (tiene le modifiche)
-  # device indica dove salviamo i volumi sulla macchina locale
+
   db-volume:
     driver_opts:
       o: bind
@@ -139,6 +132,3 @@ volumes: #qua configuriamo i volumi.
 networks:
     inception:
         driver: bridge
-# definiamo la nostra rete, chiamata inception, che si basa sul sistema bridge
-# dove le porte della rete non sono connesse a quelle della macchina locale (per questo le
-# apriamo poi noi manualmente). Altri tipi: host, overlay, macvlan, none.

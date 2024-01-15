@@ -1,8 +1,11 @@
 FROM alpine:3.18
-ARG PHP_VERSION=81 \
-    DB_NAME \
-    DB_USER \
-    DB_PASS
+
+ARG PHP_VERSION=81
+ARG DB_NAME
+ARG DB_USER
+ARG DB_PASS
+
+# Installazione dei pacchetti necessari
 RUN apk update && apk upgrade && apk add --no-cache \
     php${PHP_VERSION} \
     php${PHP_VERSION}-fpm \
@@ -26,12 +29,23 @@ RUN apk update && apk upgrade && apk add --no-cache \
     sed -i "s|;listen.group = nobody|listen.group = nobody|g" \
       /etc/php81/php-fpm.d/www.conf && \
     rm -f /var/cache/apk/*
+
+# Impostazione del lavoro nella directory di lavoro
 WORKDIR /var/www
+
+# Download e installazione di WordPress
 RUN wget https://wordpress.org/latest.zip && \
     unzip latest.zip && \
     cp -rf wordpress/* . && \
     rm -rf wordpress latest.zip
-COPY ./requirements/wordpress/conf/wp-config-create.sh .
-RUN sh wp-config-create.sh && rm wp-config-create.sh && \
-    chmod -R 0777 wp-content/
+
+# Se il tuo file di configurazione non esiste, crea un file di configurazione di base
+RUN [ ! -f "/var/www/wp-config.php" ] && sh wp-config-create.sh && chmod -R 0777 wp-content/ || true
+
+# Impostazione dei permessi per wp-content (modificato rispetto alla versione originale)
+RUN chmod -R 0755 wp-content && \
+    chown -R nobody:nobody wp-content
+
+# Comando di avvio di php-fpm
 CMD ["/usr/sbin/php-fpm81", "-F"]
+
