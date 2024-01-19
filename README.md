@@ -1,3 +1,4 @@
+scp -r ./Inception/ user@ipaddr:~/
 
 
 Before starting the evaluation, run this command in the terminal: 
