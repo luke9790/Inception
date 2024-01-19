@@ -29,11 +29,8 @@ clean: down
 	@sudo rm -rf ./data/mariadb/*
 	@sudo rm -rf ./data
 
-fclean:
+fclean:clean
 	@printf "Total clean of all configurations docker\n"
-	if [ -n "$$(docker ps -qa)" ]; then \
-		docker stop $$(docker ps -qa); \
-	fi
 	@docker system prune --all --force --volumes
 	@docker volume rm srcs_wp-volume
 	@docker volume rm srcs_db-volume

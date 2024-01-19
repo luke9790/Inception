@@ -33,6 +33,8 @@ services:
     networks:
       - inception
     restart: always
+    volumes:
+    - db-volume:/var/lib/mysql
 
   wordpress:
     build:
