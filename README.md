@@ -7,4 +7,12 @@ Before starting the evaluation, run this command in the terminal:
 
 https://login.42.fr
 https://login.42.fr/wp-login.php
+
+
 docker exec -it mariadb mysql -u root
+
+docker exec -it redis redis-cli  ping
+
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' vsftpd     (prendiamo l ip per filezilla)
+
+https://localhost:9443
